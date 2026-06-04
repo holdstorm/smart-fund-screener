@@ -19,7 +19,7 @@ This project builds a local HTML dashboard with TTFund Skills data. It combines 
 
 ## Screenshot
 
-Add a screenshot after generating `output/zmail_recommend.html`.
+![Smart Fund Screener dashboard](docs/assets/fund-screener-screenshot.png)
 
 ## Requirements
 
