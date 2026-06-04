@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+.venv/
+venv/
+env/
+
+tmp/
+.env
+.env.*
+!.env.example
+
+*.log
+
+# Generated reports and local data snapshots
+output/
+tmp_perf_*.json
+
+# Local project handoff notes may contain machine-specific context
+PROJECT_HANDOFF.md
+ttfund-all-skills.md
+基金分析报告_*.md
+
+# Local editor / OS files
+.vscode/
+.idea/
+Thumbs.db
