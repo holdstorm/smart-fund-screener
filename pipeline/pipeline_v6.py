@@ -24,11 +24,11 @@ import sys
 import time
 from pathlib import Path
 
-import pipeline_v5 as v5
+import ttfund_api as api
 
 
-WORKDIR = Path(v5.WORKDIR)
-OUT = Path(v5.OUT)
+WORKDIR = Path(api.WORKDIR)
+OUT = Path(api.OUT)
 NAV_RANGE = "3n"
 MIN_ENDNAV = 50_000_000
 RISK_FETCH_LIMIT = 60
@@ -44,7 +44,7 @@ SYL_MAP = {
 
 
 def cond_select(order_field: str, fund_type: str, page_size: int = 50) -> list[dict]:
-    response = v5.call_skill(
+    response = api.call_skill(
         "FUND_CONDITION_SELECT",
         "1.1.0",
         {
@@ -64,7 +64,7 @@ def cond_select(order_field: str, fund_type: str, page_size: int = 50) -> list[d
 
 
 def cs_to_base_info(cs_record: dict) -> dict:
-    info = v5.cs_to_base_info(cs_record)
+    info = api.cs_to_base_info(cs_record)
     field_map = {
         "SYL_Z": "weekSyl",
         "SYL_Y": "monthSyl",
@@ -95,7 +95,7 @@ def get_nav_history(fund_code: str, range_type: str = NAV_RANGE) -> tuple[list[d
         if item not in ranges:
             ranges.append(item)
     for current_range in ranges:
-        response = v5.call_skill(
+        response = api.call_skill(
             "FUND_NAV_INFO",
             "1.0.0",
             {"fund_id": fund_code, "range": current_range},
@@ -146,17 +146,17 @@ def format_assets_yi(value: float | None) -> str:
 
 
 def base_risk_metrics(base_info: dict, one_year_return: float | None) -> dict:
-    max_dd = v5.parse_pct(base_info.get("MAXRETRA1"))
+    max_dd = api.parse_pct(base_info.get("MAXRETRA1"))
     drawdowns = {
-        "m1": v5.parse_pct(base_info.get("CS_DD_1M")),
-        "m3": v5.parse_pct(base_info.get("CS_DD_3M")),
-        "m6": v5.parse_pct(base_info.get("CS_DD_6M")),
-        "y1": v5.parse_pct(base_info.get("CS_DD_1Y")),
-        "y3": v5.parse_pct(base_info.get("CS_DD_3Y")),
+        "m1": api.parse_pct(base_info.get("CS_DD_1M")),
+        "m3": api.parse_pct(base_info.get("CS_DD_3M")),
+        "m6": api.parse_pct(base_info.get("CS_DD_6M")),
+        "y1": api.parse_pct(base_info.get("CS_DD_1Y")),
+        "y3": api.parse_pct(base_info.get("CS_DD_3Y")),
     }
     if max_dd is None:
         max_dd = drawdowns.get("y1")
-    vol = v5.parse_pct(base_info.get("STDDEV1"))
+    vol = api.parse_pct(base_info.get("STDDEV1"))
     if max_dd is None:
         max_dd = _safe_float(base_info.get("MAXRETRA1"))
         if max_dd is not None and max_dd > 1:
@@ -407,8 +407,8 @@ def score_components(ftype: str, returns_map: dict, risk: dict | None = None) ->
         "riskLevel": risk_level,
         "ranking": ranking,
         "suggestion": suggestion,
-        "drawdown": v5.fmt_pct(max_dd),
-        "volatility": v5.fmt_pct(vol),
+        "drawdown": api.fmt_pct(max_dd),
+        "volatility": api.fmt_pct(vol),
         "sharpe": sharpe,
         "scoreBreakdown": {
             "returnScore": round(return_score, 1),
@@ -433,14 +433,14 @@ def classify_fund(base_info: dict, fallback_name: str) -> str:
         ftype = "bond"
     else:
         ftype = "mix"
-    r1y = v5.parse_pct(base_info.get("SYL_1N"))
+    r1y = api.parse_pct(base_info.get("SYL_1N"))
     if r1y and r1y > 0.30:
         ftype = "mix"
     return ftype
 
 
 def build_record(fc: str, base_info: dict, ftype: str, returns_map: dict, score: dict, risk: dict | None) -> dict:
-    manager_info = v5.extract_manager_info(base_info.get("expansion"))
+    manager_info = api.extract_manager_info(base_info.get("expansion"))
     drawdowns = (risk or {}).get("drawdowns", {})
     counts = (risk or {}).get("navPointCounts", {})
     return {
@@ -448,22 +448,22 @@ def build_record(fc: str, base_info: dict, ftype: str, returns_map: dict, score:
         "fundName": base_info.get("SHORTNAME", fc),
         "ftype": ftype,
         **score,
-        "r1w": v5.fmt_pct(returns_map.get("oneWeek")),
-        "r1m": v5.fmt_pct(returns_map.get("oneMonth")),
-        "r3m": v5.fmt_pct(returns_map.get("quarter")),
-        "r6m": v5.fmt_pct(returns_map.get("halfYear")),
-        "r1y": v5.fmt_pct(returns_map.get("oneYear")),
-        "r2y": v5.fmt_pct(returns_map.get("twoYear")),
-        "r3y": v5.fmt_pct(returns_map.get("threeYear")),
-        "dd1m": v5.fmt_pct(drawdowns.get("m1")),
-        "dd3m": v5.fmt_pct(drawdowns.get("m3")),
-        "dd6m": v5.fmt_pct(drawdowns.get("m6")),
-        "dd1y": v5.fmt_pct(drawdowns.get("y1")),
-        "dd3y": v5.fmt_pct(drawdowns.get("y3")),
+        "r1w": api.fmt_pct(returns_map.get("oneWeek")),
+        "r1m": api.fmt_pct(returns_map.get("oneMonth")),
+        "r3m": api.fmt_pct(returns_map.get("quarter")),
+        "r6m": api.fmt_pct(returns_map.get("halfYear")),
+        "r1y": api.fmt_pct(returns_map.get("oneYear")),
+        "r2y": api.fmt_pct(returns_map.get("twoYear")),
+        "r3y": api.fmt_pct(returns_map.get("threeYear")),
+        "dd1m": api.fmt_pct(drawdowns.get("m1")),
+        "dd3m": api.fmt_pct(drawdowns.get("m3")),
+        "dd6m": api.fmt_pct(drawdowns.get("m6")),
+        "dd1y": api.fmt_pct(drawdowns.get("y1")),
+        "dd3y": api.fmt_pct(drawdowns.get("y3")),
         "manager": manager_info["name"],
         "size": base_info.get("COMPANY", base_info.get("JJGS", "")),
         "endNavYi": format_assets_yi(parse_assets_value(base_info)),
-        "daySyl": v5.parse_pct(base_info.get("RZDF", base_info.get("daySyl", "0"))) or 0,
+        "daySyl": api.parse_pct(base_info.get("RZDF", base_info.get("daySyl", "0"))) or 0,
         "riskMetrics": {
             "drawdownSource": (risk or {}).get("drawdownSource", "missing"),
             "navRangeActual": (risk or {}).get("navRangeActual", ""),
@@ -522,7 +522,7 @@ def main() -> bool:
     fund_base = {}
     for i, fc in enumerate(sorted(all_codes), 1):
         sys.stdout.write(f"  [{i}/{len(all_codes)}] {fc} ... ")
-        info = v5.get_base_info(fc)
+        info = api.get_base_info(fc)
         if info:
             fund_base[fc] = info
             print(str(info.get("SHORTNAME", "?"))[:25])
@@ -541,7 +541,7 @@ def main() -> bool:
             elim_stats["low_assets"] += 1
             continue
         ftype = classify_fund(base_info, fc)
-        returns_map = {key: v5.parse_pct(base_info.get(field)) for key, field in SYL_MAP.items()}
+        returns_map = {key: api.parse_pct(base_info.get(field)) for key, field in SYL_MAP.items()}
         score, reason = score_components(ftype, returns_map, risk=None)
         if score is None:
             if "数据缺失" in (reason or ""):
@@ -643,7 +643,7 @@ def main() -> bool:
 
 
 def validate_output(html_path: str, json_path: str, expected_mix: int, expected_bond: int) -> bool:
-    ok = v5._validate_output(html_path, json_path, expected_mix, expected_bond)
+    ok = api.validate_output(html_path, json_path, expected_mix, expected_bond)
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     sample_pool = data.get("mix_funds", []) or data.get("bond_funds", [])

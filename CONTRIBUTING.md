@@ -12,7 +12,7 @@ Thanks for helping improve Fund ETF Dashboard.
 ## Local Checks
 
 ```powershell
-python -m py_compile .\pipeline\pipeline_v6.py .\pipeline\server.py
+python -m py_compile .\pipeline\ttfund_api.py .\pipeline\pipeline_v6.py .\pipeline\server.py
 ```
 
 ## Good First Issues

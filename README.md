@@ -53,6 +53,12 @@ You can also copy `.env.example` to `.env` for your own notes, but `.env` is int
 
 ## Usage
 
+The maintained entry points are:
+
+- `pipeline/pipeline_v6.py`: generate the dashboard data and HTML.
+- `pipeline/server.py`: serve the generated dashboard and expose the refresh button endpoint.
+- `pipeline/ttfund_api.py`: small shared TTFund API helper module.
+
 Generate the report:
 
 ```powershell
