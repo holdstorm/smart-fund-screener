@@ -1,15 +1,15 @@
-# Fund ETF Dashboard
+# Smart Fund Screener
 
-An open-source Python dashboard for screening Chinese mutual funds and ETFs with TTFund Skills data.
+Quantitative fund screening platform that ranks Chinese mutual funds and ETFs using return, risk, drawdown, and performance factors.
 
-The project builds a local HTML report that combines multi-period returns, drawdown windows, volatility, Sharpe-like scoring, fund-size filters, and a refresh workflow. It is designed for transparent, reproducible fund screening rather than investment advice.
+This project builds a local HTML dashboard with TTFund Skills data. It combines multi-period returns, drawdown windows, volatility, Sharpe-like scoring, fund-size filters, and a refresh workflow. It is designed for transparent, reproducible fund screening rather than investment advice.
 
 ## Features
 
 - Multi-dimensional candidate discovery through TTFund condition selection.
 - Fund-size filter, currently requiring latest fund net assets of at least CNY 50 million.
-- Multi-period return columns, including 1 week, 1 month, 3 months, 6 months, 1 year, 2 years, and 3 years.
-- Multi-window drawdown columns, including 1 month, 3 months, 6 months, 1 year, and 3 years.
+- Multi-period return columns: 1 week, 1 month, 3 months, 6 months, 1 year, 2 years, and 3 years.
+- Multi-window drawdown columns: 1 month, 3 months, 6 months, 1 year, and 3 years.
 - Hybrid risk calculation:
   - Uses API-provided metrics when available.
   - Falls back to NAV history and local calculations when the API does not provide precomputed fields.
@@ -29,11 +29,13 @@ Add a screenshot after generating `output/zmail_recommend.html`.
 
 The current runtime uses only the Python standard library.
 
-## Configuration
+## API Key Setup
 
 Create a local environment variable before running the pipeline.
 
-To get a TTFund Skills API key, open the 天天基金 app or the TTFund Skills entry point you use for Skills access, search for `skills`, and follow the API key / apikey instructions there. Keep the key private. Do not paste a real key into source code, issues, screenshots, or pull requests.
+To get a TTFund Skills API key, open the 天天基金 app or the TTFund Skills entry point you use for Skills access, search for `skills`, and follow the API key / apikey instructions there.
+
+Keep the key private. Do not paste a real key into source code, issues, screenshots, pull requests, or generated reports.
 
 PowerShell:
 
