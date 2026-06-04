@@ -12,6 +12,8 @@ TTFUND_APIKEY
 
 `TTFUND_API_KEY` is also accepted as a compatibility alias.
 
+To get a key, use the 天天基金 Skills entry point, search for `skills`, and follow the apikey instructions. Never commit the real key.
+
 ## Metric Strategy
 
 The dashboard uses a conservative hybrid strategy:

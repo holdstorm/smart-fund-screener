@@ -33,16 +33,18 @@ The current runtime uses only the Python standard library.
 
 Create a local environment variable before running the pipeline.
 
+To get a TTFund Skills API key, open the 天天基金 app or the TTFund Skills entry point you use for Skills access, search for `skills`, and follow the API key / apikey instructions there. Keep the key private. Do not paste a real key into source code, issues, screenshots, or pull requests.
+
 PowerShell:
 
 ```powershell
-$env:TTFUND_APIKEY = "your-ttfund-api-key"
+$env:TTFUND_APIKEY = "your-api-key-here"
 ```
 
 Bash:
 
 ```bash
-export TTFUND_APIKEY="your-ttfund-api-key"
+export TTFUND_APIKEY="your-api-key-here"
 ```
 
 You can also copy `.env.example` to `.env` for your own notes, but `.env` is intentionally ignored by Git.
